@@ -1,0 +1,13 @@
+[workspace]
+resolver = "2"
+members = [ "pwned_pwd_core","pwned_pwd_downloader", "pwned_pwd_store", "pwned_pwd_store_local"]
+
+[profile.test]
+debug = 2
+
+[workspace.dependencies]
+
+tokio = { version = "1", features = ["full"] }
+futures = { version = "0.3" }
+
+hex-literal = { version = "0.4" }

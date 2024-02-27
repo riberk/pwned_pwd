@@ -164,6 +164,7 @@ fn exists<T: Seek + Read>(data: &mut T, x: [u8; 20]) -> Result<bool, std::io::Er
 }
 
 #[cfg(test)]
+#[rustfmt::skip]
 mod tests {
     use std::{env::temp_dir, io::Cursor};
 
@@ -174,8 +175,7 @@ mod tests {
 
     #[test]
     fn exists_even_found() {
-        let data = hex!(
-            "
+        let data = hex!("
             21BD4004DDDC80AE4683948C5A1C5903584D8087
             21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED
             21BD40110328459B74EC3CC4ADCE47093DA97FD0
@@ -190,87 +190,29 @@ mod tests {
             21BD402EE1FBAB40E737BDB81EDF820EB621B1A9
             21BD4030368B0426D8F5497810ACC3AAFE6FC5F1
             21BD403D9886FA118CE12F02212EEE72B3C3BD4A
-        "
-        );
+        ");
 
         let mut cursor = Cursor::new(data);
 
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD0")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD401223249190CD4C2B5E2537329726EC5667")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF698")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4026DC435DCAB3564A0FD64AD921D827E146")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DB")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD402A437B1A6FA37515B549B5D830E838CCC4")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE6")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CE")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1A9")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F1")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD403D9886FA118CE12F02212EEE72B3C3BD4A")
-        )
-        .unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD0")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD401223249190CD4C2B5E2537329726EC5667")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF698")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4026DC435DCAB3564A0FD64AD921D827E146")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DB")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD402A437B1A6FA37515B549B5D830E838CCC4")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE6")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CE")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1A9")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F1")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD403D9886FA118CE12F02212EEE72B3C3BD4A")).unwrap());
     }
 
     #[test]
     fn exists_odd_found() {
-        let data = hex!(
-            "
+        let data = hex!("
             21BD4004DDDC80AE4683948C5A1C5903584D8087
             21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED
             21BD40110328459B74EC3CC4ADCE47093DA97FD0
@@ -284,82 +226,28 @@ mod tests {
             21BD402CDE32C2D1295997B3CE1475C828BA20CE
             21BD402EE1FBAB40E737BDB81EDF820EB621B1A9
             21BD4030368B0426D8F5497810ACC3AAFE6FC5F1
-        "
-        );
+        ");
 
         let mut cursor = Cursor::new(data);
 
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD0")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD401223249190CD4C2B5E2537329726EC5667")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF698")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4026DC435DCAB3564A0FD64AD921D827E146")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DB")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD402A437B1A6FA37515B549B5D830E838CCC4")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE6")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CE")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1A9")
-        )
-        .unwrap());
-        assert!(exists(
-            &mut cursor,
-            hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F1")
-        )
-        .unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD0")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD401223249190CD4C2B5E2537329726EC5667")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF698")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4026DC435DCAB3564A0FD64AD921D827E146")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DB")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD402A437B1A6FA37515B549B5D830E838CCC4")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE6")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CE")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1A9")).unwrap());
+        assert!(exists(&mut cursor, hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F1")).unwrap());
     }
 
     #[test]
     fn exists_odd_not_found() {
-        let data = hex!(
-            "
+        let data = hex!("
             21BD4004DDDC80AE4683948C5A1C5903584D8087
             21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED
             21BD40110328459B74EC3CC4ADCE47093DA97FD0
@@ -373,146 +261,40 @@ mod tests {
             21BD402CDE32C2D1295997B3CE1475C828BA20CE
             21BD402EE1FBAB40E737BDB81EDF820EB621B1A9
             21BD4030368B0426D8F5497810ACC3AAFE6FC5F1
-        "
-        );
+        ");
 
         let mut cursor = Cursor::new(data);
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4004DDDC80AE4683948C5A1C5903584D8086")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4004DDDC80AE4683948C5A1C5903584D8088")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2EC")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2EE")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD40110328459B74EC3CC4ADCE47093DA97FCF")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD1")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0C")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0E")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD401223249190CD4C2B5E2537329726EC5666")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD401223249190CD4C2B5E2537329726EC5668")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF697")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF699")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4026DC435DCAB3564A0FD64AD921D827E145")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4026DC435DCAB3564A0FD64AD921D827E147")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DA")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DC")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402A437B1A6FA37515B549B5D830E838CCC3")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402A437B1A6FA37515B549B5D830E838CCC5")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE5")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE7")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CD")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CF")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1A8")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1AA")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F0")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F2")
-        )
-        .unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4004DDDC80AE4683948C5A1C5903584D8086")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4004DDDC80AE4683948C5A1C5903584D8088")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2EC")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2EE")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD40110328459B74EC3CC4ADCE47093DA97FCF")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD1")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0C")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0E")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD401223249190CD4C2B5E2537329726EC5666")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD401223249190CD4C2B5E2537329726EC5668")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF697")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF699")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4026DC435DCAB3564A0FD64AD921D827E145")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4026DC435DCAB3564A0FD64AD921D827E147")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DA")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DC")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402A437B1A6FA37515B549B5D830E838CCC3")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402A437B1A6FA37515B549B5D830E838CCC5")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE5")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE7")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CD")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CF")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1A8")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1AA")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F0")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F2")).unwrap());
     }
 
     #[test]
     fn exists_even_not_found() {
-        let data = hex!(
-            "
+        let data = hex!("
             21BD4004DDDC80AE4683948C5A1C5903584D8087
             21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED
             21BD40110328459B74EC3CC4ADCE47093DA97FD0
@@ -527,156 +309,42 @@ mod tests {
             21BD402EE1FBAB40E737BDB81EDF820EB621B1A9
             21BD4030368B0426D8F5497810ACC3AAFE6FC5F1
             21BD403D9886FA118CE12F02212EEE72B3C3BD4A
-        "
-        );
+        ");
 
         let mut cursor = Cursor::new(data);
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4004DDDC80AE4683948C5A1C5903584D8086")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4004DDDC80AE4683948C5A1C5903584D8088")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2EC")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2EE")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD40110328459B74EC3CC4ADCE47093DA97FCF")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD1")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0C")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0E")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD401223249190CD4C2B5E2537329726EC5666")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD401223249190CD4C2B5E2537329726EC5668")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF697")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF699")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4026DC435DCAB3564A0FD64AD921D827E145")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4026DC435DCAB3564A0FD64AD921D827E147")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DA")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DC")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402A437B1A6FA37515B549B5D830E838CCC3")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402A437B1A6FA37515B549B5D830E838CCC5")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE5")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE7")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CD")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CF")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1A8")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1AA")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F0")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F2")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD403D9886FA118CE12F02212EEE72B3C3BD49")
-        )
-        .unwrap());
-        assert!(!exists(
-            &mut cursor,
-            hex!("21BD403D9886FA118CE12F02212EEE72B3C3BD4B")
-        )
-        .unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4004DDDC80AE4683948C5A1C5903584D8086")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4004DDDC80AE4683948C5A1C5903584D8088")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2EC")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2EE")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD40110328459B74EC3CC4ADCE47093DA97FCF")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD1")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0C")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0E")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD401223249190CD4C2B5E2537329726EC5666")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD401223249190CD4C2B5E2537329726EC5668")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF697")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4021BFAACC3E46C4FC74BE8E7D2FDF7CF699")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4026DC435DCAB3564A0FD64AD921D827E145")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4026DC435DCAB3564A0FD64AD921D827E147")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DA")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4026F2E5BA164D1B277D9AF5085249F414DC")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402A437B1A6FA37515B549B5D830E838CCC3")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402A437B1A6FA37515B549B5D830E838CCC5")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE5")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402C77AFF03FC91842C503DB0BB83AB1BBE7")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CD")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402CDE32C2D1295997B3CE1475C828BA20CF")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1A8")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD402EE1FBAB40E737BDB81EDF820EB621B1AA")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F0")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD4030368B0426D8F5497810ACC3AAFE6FC5F2")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD403D9886FA118CE12F02212EEE72B3C3BD49")).unwrap());
+        assert!(!exists(&mut cursor, hex!("21BD403D9886FA118CE12F02212EEE72B3C3BD4B")).unwrap());
     }
 
     #[tokio::test]
     async fn store_exists() {
-        let data = hex!(
-            "
+        let data = hex!("
             21BD4004DDDC80AE4683948C5A1C5903584D8087
             21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED
             21BD40110328459B74EC3CC4ADCE47093DA97FD0
@@ -691,8 +359,7 @@ mod tests {
             21BD402EE1FBAB40E737BDB81EDF820EB621B1A9
             21BD4030368B0426D8F5497810ACC3AAFE6FC5F1
             21BD403D9886FA118CE12F02212EEE72B3C3BD4A
-        "
-        );
+        ");
         let mut tmp_file_path = temp_dir();
         tmp_file_path.push("pwned_pwd_tests_store_exists");
 
@@ -707,55 +374,20 @@ mod tests {
             buff_capacity: None,
         };
 
-        assert!(store
-            .exists(hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087"))
-            .await
-            .unwrap());
-        assert!(store
-            .exists(hex!("21BD401223249190CD4C2B5E2537329726EC5667"))
-            .await
-            .unwrap());
-        assert!(store
-            .exists(hex!("21BD402A437B1A6FA37515B549B5D830E838CCC4"))
-            .await
-            .unwrap());
-        assert!(store
-            .exists(hex!("21BD403D9886FA118CE12F02212EEE72B3C3BD4A"))
-            .await
-            .unwrap());
-        assert!(!store
-            .exists(hex!("21BD403D9886FA118CE12F02212EEE72B3C3BD4B"))
-            .await
-            .unwrap());
+        assert!(store.exists(hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087")).await.unwrap());
+        assert!(store.exists(hex!("21BD401223249190CD4C2B5E2537329726EC5667")).await.unwrap());
+        assert!(store.exists(hex!("21BD402A437B1A6FA37515B549B5D830E838CCC4")).await.unwrap());
+        assert!(store.exists(hex!("21BD403D9886FA118CE12F02212EEE72B3C3BD4A")).await.unwrap());
+        assert!(!store.exists(hex!("21BD403D9886FA118CE12F02212EEE72B3C3BD4B")).await.unwrap());
     }
 
     #[tokio::test]
     async fn store_save() {
         let (mut sender, receiver) = futures::channel::mpsc::channel::<PwnedPwd>(256 * 1024);
-        sender
-            .send(PwnedPwd {
-                sha1: hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087"),
-            })
-            .await
-            .unwrap();
-        sender
-            .send(PwnedPwd {
-                sha1: hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED"),
-            })
-            .await
-            .unwrap();
-        sender
-            .send(PwnedPwd {
-                sha1: hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD0"),
-            })
-            .await
-            .unwrap();
-        sender
-            .send(PwnedPwd {
-                sha1: hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D"),
-            })
-            .await
-            .unwrap();
+        sender.send(PwnedPwd {sha1: hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087"),}).await.unwrap();
+        sender.send(PwnedPwd {sha1: hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED"),}).await.unwrap();
+        sender.send(PwnedPwd {sha1: hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD0"),}).await.unwrap();
+        sender.send(PwnedPwd {sha1: hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D"),}).await.unwrap();
         sender.close_channel();
 
         let mut tmp_file_path = temp_dir();
@@ -777,16 +409,11 @@ mod tests {
         let mut file_data = Vec::new();
         file.read_to_end(&mut file_data).unwrap();
 
-        assert_eq!(
-            hex!(
-                "
+        assert_eq!(hex!("
             21BD4004DDDC80AE4683948C5A1C5903584D8087
             21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED
             21BD40110328459B74EC3CC4ADCE47093DA97FD0
             21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D
-        "
-            ),
-            file_data.as_slice()
-        );
+        "),file_data.as_slice());
     }
 }

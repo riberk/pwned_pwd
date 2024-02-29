@@ -6,3 +6,9 @@ edition = "2021"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
+pwned_pwd_core = { path = "../pwned_pwd_core" }
+
+tokio = { workspace = true }
+reqwest = { workspace = true }
+futures = { workspace = true }
+hex = { workspace = true }

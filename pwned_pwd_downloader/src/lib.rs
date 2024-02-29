@@ -1,14 +1,17 @@
-pub fn add(left: usize, right: usize) -> usize {
-    left + right
-}
+pub struct Downloader {}
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+// impl Downloader {
+//     pub async fn download(&self) -> impl Stream<Item = PwnedPwd> {
 
-    #[test]
-    fn it_works() {
-        let result = add(2, 2);
-        assert_eq!(result, 4);
-    }
-}
+//         let (p, r) = mpsc::channel(2048);
+
+//         let text = reqwest::get(&self.base_uri).await.unwrap().text().await.unwrap();
+
+//         while let Some(r) = stream.next().await {
+//             let bytes = r.unwrap();
+
+//         }
+
+//         r
+//     }
+// }

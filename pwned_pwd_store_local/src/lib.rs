@@ -384,10 +384,10 @@ mod tests {
     #[tokio::test]
     async fn store_save() {
         let (mut sender, receiver) = futures::channel::mpsc::channel::<PwnedPwd>(256 * 1024);
-        sender.send(PwnedPwd {sha1: hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087"),}).await.unwrap();
-        sender.send(PwnedPwd {sha1: hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED"),}).await.unwrap();
-        sender.send(PwnedPwd {sha1: hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD0"),}).await.unwrap();
-        sender.send(PwnedPwd {sha1: hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D"),}).await.unwrap();
+        sender.send(PwnedPwd {sha1: hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087"), count: 10, }).await.unwrap();
+        sender.send(PwnedPwd {sha1: hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED"), count: 10, }).await.unwrap();
+        sender.send(PwnedPwd {sha1: hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD0"), count: 10, }).await.unwrap();
+        sender.send(PwnedPwd {sha1: hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D"), count: 10, }).await.unwrap();
         sender.close_channel();
 
         let mut tmp_file_path = temp_dir();

@@ -1,4 +1,8 @@
-use std::str::from_utf8_unchecked;
+use std::{
+    fmt::{Debug, Display},
+    hash::Hash,
+    str::from_utf8_unchecked,
+};
 
 use hex::ToHex;
 
@@ -13,7 +17,7 @@ pub struct PwnedPwd {
 }
 
 /// Prefix for downloading from haveibeenpwned with k-anonimity
-#[derive(Debug, Default, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, Default, PartialEq, Eq, Clone, Copy, Hash)]
 pub struct Prefix(u32);
 
 /// String representation of a [Prefix]
@@ -51,21 +55,43 @@ impl AsRef<str> for PrefixStr {
     }
 }
 
+impl std::ops::Add<u32> for Prefix {
+    type Output = Option<Prefix>;
+
+    fn add(self, rhs: u32) -> Self::Output {
+        Prefix::create(self.0 + rhs)
+    }
+}
+
 impl Prefix {
     const MAX_PREFIX: u32 = 0xFFFFF;
+
+    pub fn create(v: u32) -> Option<Prefix> {
+        if v > Self::MAX_PREFIX {
+            None
+        } else {
+            Some(Prefix(v))
+        }
+    }
 
     /// Max possible prefix
     pub fn max() -> Self {
         Prefix(Self::MAX_PREFIX)
     }
 
+    /// Count of prefixes
+    pub fn count() -> u32 {
+        Self::MAX_PREFIX
+    }
+
     /// Get a next prefix or None, if self is max
-    pub fn next_prefix(&self) -> Option<Self> {
-        if self.0 == Self::MAX_PREFIX {
-            None
-        } else {
-            Some(Self(self.0 + 1))
-        }
+    pub fn next(&self) -> Option<Self> {
+        self.forward(1)
+    }
+
+    /// Get a forwarded prefix by `v` or None, if self + v is invalid prefix
+    pub fn forward(&self, v: u32) -> Option<Self> {
+        Self::create(self.0 + v)
     }
 
     /// Get string representation
@@ -96,6 +122,45 @@ impl TryFrom<u32> for Prefix {
     }
 }
 
+impl IntoIterator for Prefix {
+    type Item = Prefix;
+
+    type IntoIter = PrefixIterator;
+
+    fn into_iter(self) -> Self::IntoIter {
+        PrefixIterator { next: Some(self) }
+    }
+}
+
+pub struct PrefixIterator {
+    next: Option<Prefix>,
+}
+
+impl Iterator for PrefixIterator {
+    type Item = Prefix;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        let current = self.next.clone();
+        self.next = self.next.and_then(|v| v.next());
+        current
+    }
+}
+
+pub struct Chunk {
+    pub prefix: Prefix,
+    pub passwords: Vec<PwnedPwd>,
+}
+
+impl IntoIterator for Chunk {
+    type Item = PwnedPwd;
+
+    type IntoIter = std::vec::IntoIter<PwnedPwd>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.passwords.into_iter()
+    }
+}
+
 #[derive(thiserror::Error, Debug, PartialEq, Eq)]
 pub enum PrefixError {
     #[error("Prefix is out of range, it must be from 0x00000 to 0xfffff")]
@@ -103,7 +168,7 @@ pub enum PrefixError {
 }
 
 #[derive(thiserror::Error, Debug, PartialEq)]
-pub enum ParserError {
+pub enum ParseError {
     #[error("Invalid hex: {0}")]
     FromHexError(#[from] hex::FromHexError),
 
@@ -134,15 +199,15 @@ impl Parser {
         Self { prefix }
     }
 
-    pub fn parse(&self, value: impl AsRef<str>) -> Result<PwnedPwd, ParserError> {
+    pub fn parse(&self, value: impl AsRef<str>) -> Result<PwnedPwd, ParseError> {
         let value = value.as_ref();
 
         if value.len() < 37 {
-            return Err(ParserError::InvalidStringLength);
+            return Err(ParseError::InvalidStringLength);
         }
 
         if value.as_bytes()[35] != b':' {
-            return Err(ParserError::InvalidString);
+            return Err(ParseError::InvalidString);
         }
 
         let mut res = [0; 20];
@@ -168,6 +233,12 @@ fn val(char: u8, idx: usize) -> Result<u8, hex::FromHexError> {
             c: char as char,
             index: idx,
         }),
+    }
+}
+
+impl Display for Prefix {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.as_prefix_str().fmt(f)
     }
 }
 
@@ -219,13 +290,13 @@ mod tests {
     #[test]
     fn prefix_next() {
         let mut prefix = Prefix(0);
-        while let Some(next) = prefix.next_prefix(){
+        while let Some(next) = prefix.next(){
             assert_eq!(next.0, prefix.0 + 1);
             prefix = next;
         }
         assert_eq!(0xFFFFF, prefix.0);
-        assert_eq!(None, prefix.next_prefix());
-        assert_eq!(None, prefix.next_prefix());
+        assert_eq!(None, prefix.next());
+        assert_eq!(None, prefix.next());
     }
 
     #[test]
@@ -240,9 +311,19 @@ mod tests {
         assert_eq!(PwnedPwd { sha1: hex::decode("00000004DDDC80AE4683948C5A1C5903584D8087").unwrap().try_into().unwrap(), count: 0 }, parser.parse("004DDDC80AE4683948C5A1C5903584D8087:0").unwrap());
         assert_eq!(PwnedPwd { sha1: hex::decode("00000FFF08998514E6E8F28DBB4CA9F74EA5CAFA").unwrap().try_into().unwrap(), count: 999999 }, parser.parse("FFF08998514E6E8F28DBB4CA9F74EA5CAFA:999999").unwrap());
 
-        assert_eq!(Err::<PwnedPwd, ParserError>(ParserError::FromHexError(hex::FromHexError::InvalidHexCharacter { c: 'Q', index: 0 })), parser.parse("QFF08998514E6E8F28DBB4CA9F74EA5CAFA:999999"));
-        assert_eq!(Err::<PwnedPwd, ParserError>(ParserError::FromHexError(hex::FromHexError::InvalidHexCharacter { c: ':', index: 33 })), parser.parse("AFF08998514E6E8F28DBB4CA9F74EA5CAF::999999"));
-        assert_eq!(Err::<PwnedPwd, ParserError>(ParserError::InvalidStringLength), parser.parse("FF08998514E6E8F28DBB4CA9F74EA5CAFA"));
-        assert_eq!(Err::<PwnedPwd, ParserError>(ParserError::InvalidString), parser.parse("FF08998514E6E8F28DBB4CA9F74EA5CAFA|999999"));
+        assert_eq!(Err::<PwnedPwd, ParseError>(ParseError::FromHexError(hex::FromHexError::InvalidHexCharacter { c: 'Q', index: 0 })), parser.parse("QFF08998514E6E8F28DBB4CA9F74EA5CAFA:999999"));
+        assert_eq!(Err::<PwnedPwd, ParseError>(ParseError::FromHexError(hex::FromHexError::InvalidHexCharacter { c: ':', index: 33 })), parser.parse("AFF08998514E6E8F28DBB4CA9F74EA5CAF::999999"));
+        assert_eq!(Err::<PwnedPwd, ParseError>(ParseError::InvalidStringLength), parser.parse("FF08998514E6E8F28DBB4CA9F74EA5CAFA"));
+        assert_eq!(Err::<PwnedPwd, ParseError>(ParseError::InvalidString), parser.parse("FF08998514E6E8F28DBB4CA9F74EA5CAFA|999999"));
+    }
+
+    #[test]
+    fn iterator() {
+        let mut iterator = Prefix(0x0000).into_iter();
+        for i in 0..=Prefix::MAX_PREFIX {
+            assert_eq!(Some(Prefix(i)), iterator.next())
+        }
+
+        assert_eq!(None, iterator.next())
     }
 }

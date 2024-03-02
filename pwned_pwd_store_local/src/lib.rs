@@ -111,7 +111,7 @@ impl Store for LocalStore {
 
     fn save<
         'a,
-        S: 'a + Stream<Item = pwned_pwd_core::PwnedPwd> + std::marker::Unpin + std::marker::Send,
+        S: 'a + Stream<Item = pwned_pwd_core::Chunk> + std::marker::Unpin + std::marker::Send,
     >(
         &'a self,
         mut s: S,
@@ -119,8 +119,10 @@ impl Store for LocalStore {
         Box::pin(async move {
             let mut pwd_file = self.open_write()?;
 
-            while let Some(pwned_pwd) = s.next().await {
-                pwd_file.write(pwned_pwd)?;
+            while let Some(chunk) = s.next().await {
+                for pwned_pwd in chunk {
+                    pwd_file.write(pwned_pwd)?;
+                }
             }
 
             pwd_file.complete()?;
@@ -133,6 +135,10 @@ impl Store for LocalStore {
             let mut file = self.open_read()?;
             exists(&mut file, val)
         })
+    }
+
+    fn order_requirement() -> pwned_pwd_store::OrderRequirement {
+        pwned_pwd_store::OrderRequirement::Ordered
     }
 }
 
@@ -170,6 +176,7 @@ mod tests {
 
     use futures::SinkExt;
     use hex_literal::hex;
+    use pwned_pwd_core::{Chunk, Prefix};
 
     use super::*;
 
@@ -383,11 +390,26 @@ mod tests {
 
     #[tokio::test]
     async fn store_save() {
-        let (mut sender, receiver) = futures::channel::mpsc::channel::<PwnedPwd>(256 * 1024);
-        sender.send(PwnedPwd {sha1: hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087"), count: 10, }).await.unwrap();
-        sender.send(PwnedPwd {sha1: hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED"), count: 10, }).await.unwrap();
-        sender.send(PwnedPwd {sha1: hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD0"), count: 10, }).await.unwrap();
-        sender.send(PwnedPwd {sha1: hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D"), count: 10, }).await.unwrap();
+        let (mut sender, receiver) = futures::channel::mpsc::channel::<Chunk>(256 * 1024);
+
+        sender.send(Chunk {
+            prefix: Prefix::create(0x21DB4).unwrap(), passwords: vec![
+                PwnedPwd {sha1: hex!("21BD4004DDDC80AE4683948C5A1C5903584D8087"), count: 10, },
+                PwnedPwd {sha1: hex!("21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED"), count: 10, },
+                PwnedPwd {sha1: hex!("21BD40110328459B74EC3CC4ADCE47093DA97FD0"), count: 10, },
+                PwnedPwd {sha1: hex!("21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D"), count: 10, },
+            ]}
+        ).await.unwrap();
+
+        sender.send(Chunk {
+            prefix: Prefix::create(0x21DB5).unwrap(), passwords: vec![
+                PwnedPwd {sha1: hex!("21BD5004DDDC80AE4683948C5A1C5903584D8087"), count: 11, },
+                PwnedPwd {sha1: hex!("21BD500C53D0B33029D7FE4FB08D3D1C9832D2ED"), count: 12, },
+                PwnedPwd {sha1: hex!("21BD50110328459B74EC3CC4ADCE47093DA97FD0"), count: 13, },
+                PwnedPwd {sha1: hex!("21BD5011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D"), count: 14, },
+            ]}
+        ).await.unwrap();
+
         sender.close_channel();
 
         let mut tmp_file_path = temp_dir();
@@ -414,6 +436,10 @@ mod tests {
             21BD400C53D0B33029D7FE4FB08D3D1C9832D2ED
             21BD40110328459B74EC3CC4ADCE47093DA97FD0
             21BD4011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D
+            21BD5004DDDC80AE4683948C5A1C5903584D8087
+            21BD500C53D0B33029D7FE4FB08D3D1C9832D2ED
+            21BD50110328459B74EC3CC4ADCE47093DA97FD0
+            21BD5011CFFB38DFAD7E2FB4EE6ECED2ABCBBA0D
         "),file_data.as_slice());
     }
 }

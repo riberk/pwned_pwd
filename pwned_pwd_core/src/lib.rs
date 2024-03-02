@@ -17,7 +17,7 @@ pub struct PwnedPwd {
 }
 
 /// Prefix for downloading from haveibeenpwned with k-anonimity
-#[derive(Debug, Default, PartialEq, Eq, Clone, Copy, Hash)]
+#[derive(Debug, Default, PartialEq, Eq, Clone, Copy, Hash, PartialOrd, Ord)]
 pub struct Prefix(u32);
 
 /// String representation of a [Prefix]
@@ -146,6 +146,7 @@ impl Iterator for PrefixIterator {
     }
 }
 
+#[derive(Debug)]
 pub struct Chunk {
     pub prefix: Prefix,
     pub passwords: Vec<PwnedPwd>,

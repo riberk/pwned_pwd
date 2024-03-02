@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = [ "pwned_pwd_core","pwned_pwd_downloader", "pwned_pwd_store", "pwned_pwd_store_local"]
+members = [ "pwned_pwd", "pwned_pwd_core","pwned_pwd_downloader", "pwned_pwd_store", "pwned_pwd_store_local"]
 
 [profile.test]
 debug = 2
@@ -18,3 +18,4 @@ thiserror = { version = "1" }
 url = { version = "2" }
 tracing = { version = "0.1" }
 tracing-subscriber = { version = "0.3", features = ["json"] }
+pin-project-lite = { version = "0.2" }

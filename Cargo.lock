@@ -633,6 +633,17 @@ dependencies = [
 ]
 
 [[package]]
+name = "pwned_pwd"
+version = "0.1.0"
+dependencies = [
+ "futures",
+ "pin-project-lite",
+ "pwned_pwd_core",
+ "pwned_pwd_downloader",
+ "pwned_pwd_store",
+]
+
+[[package]]
 name = "pwned_pwd_core"
 version = "0.1.0"
 dependencies = [

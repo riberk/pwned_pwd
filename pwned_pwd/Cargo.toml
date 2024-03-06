@@ -12,3 +12,8 @@ pwned_pwd_store = { path = "../pwned_pwd_store" }
 
 futures = { workspace = true }
 pin-project-lite = { workspace = true }
+thiserror = { workspace = true }
+
+
+[dev-dependencies]
+tokio = { workspace = true }

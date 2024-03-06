@@ -641,6 +641,8 @@ dependencies = [
  "pwned_pwd_core",
  "pwned_pwd_downloader",
  "pwned_pwd_store",
+ "thiserror",
+ "tokio",
 ]
 
 [[package]]

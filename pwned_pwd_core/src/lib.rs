@@ -152,6 +152,15 @@ pub struct Chunk {
     pub passwords: Vec<PwnedPwd>,
 }
 
+impl Chunk {
+    pub fn empty(prefix: Prefix) -> Self {
+        Self {
+            prefix: prefix,
+            passwords: vec![],
+        }
+    }
+}
+
 impl IntoIterator for Chunk {
     type Item = PwnedPwd;
 

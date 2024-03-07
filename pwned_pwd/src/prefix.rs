@@ -1,20 +1,11 @@
 use std::{
     fmt::{Debug, Display},
-    hash::Hash,
     str::from_utf8_unchecked,
 };
 
 use hex::ToHex;
 
-/// Representetion of a pwned password
-#[derive(Debug, PartialEq, Eq, Clone)]
-pub struct PwnedPwd {
-    /// password SHA-1
-    pub sha1: [u8; 20],
-
-    /// how many times it appears in the data set
-    pub count: u32,
-}
+use crate::parser::Parser;
 
 /// Prefix for downloading from haveibeenpwned with k-anonimity
 #[derive(Debug, Default, PartialEq, Eq, Clone, Copy, Hash, PartialOrd, Ord)]
@@ -32,9 +23,8 @@ impl FromIterator<char> for PrefixStr {
         }
 
         let mut res = [0u8; 5];
-        for i in 0..5 {
-            let value = iter.next().expect("Invalid iterator len");
-            res[i] = value as u8;
+        for val in &mut res {
+            *val = iter.next().expect("Invalid iterator len") as u8;
         }
 
         PrefixStr(res)
@@ -106,7 +96,7 @@ impl Prefix {
     }
 
     pub fn parser(&self) -> Parser {
-        self.clone().into()
+        (*self).into()
     }
 }
 
@@ -132,6 +122,12 @@ impl IntoIterator for Prefix {
     }
 }
 
+impl Display for Prefix {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        self.as_prefix_str().fmt(f)
+    }
+}
+
 pub struct PrefixIterator {
     next: Option<Prefix>,
 }
@@ -140,34 +136,9 @@ impl Iterator for PrefixIterator {
     type Item = Prefix;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let current = self.next.clone();
+        let current = self.next;
         self.next = self.next.and_then(|v| v.next());
         current
-    }
-}
-
-#[derive(Debug)]
-pub struct Chunk {
-    pub prefix: Prefix,
-    pub passwords: Vec<PwnedPwd>,
-}
-
-impl Chunk {
-    pub fn empty(prefix: Prefix) -> Self {
-        Self {
-            prefix: prefix,
-            passwords: vec![],
-        }
-    }
-}
-
-impl IntoIterator for Chunk {
-    type Item = PwnedPwd;
-
-    type IntoIter = std::vec::IntoIter<PwnedPwd>;
-
-    fn into_iter(self) -> Self::IntoIter {
-        self.passwords.into_iter()
     }
 }
 
@@ -177,81 +148,6 @@ pub enum PrefixError {
     OutOfRange,
 }
 
-#[derive(thiserror::Error, Debug, PartialEq)]
-pub enum ParseError {
-    #[error("Invalid hex: {0}")]
-    FromHexError(#[from] hex::FromHexError),
-
-    #[error("Invalid count: {0}")]
-    ParseIntError(#[from] std::num::ParseIntError),
-
-    #[error("Invalid string lenght")]
-    InvalidStringLength,
-
-    #[error("String must contain 35 hex characters, then a ':' char and then a positive or zero integer")]
-    InvalidString,
-}
-
-/// Haveibeenpwned result lines parser
-#[derive(Debug, Default, PartialEq, Eq)]
-pub struct Parser {
-    prefix: Prefix,
-}
-
-impl From<Prefix> for Parser {
-    fn from(value: Prefix) -> Self {
-        Self { prefix: value }
-    }
-}
-
-impl Parser {
-    pub fn new(prefix: Prefix) -> Self {
-        Self { prefix }
-    }
-
-    pub fn parse(&self, value: impl AsRef<str>) -> Result<PwnedPwd, ParseError> {
-        let value = value.as_ref();
-
-        if value.len() < 37 {
-            return Err(ParseError::InvalidStringLength);
-        }
-
-        if value.as_bytes()[35] != b':' {
-            return Err(ParseError::InvalidString);
-        }
-
-        let mut res = [0; 20];
-        self.prefix.write_prefix(&mut res);
-
-        res[2] = res[2] | val(value.as_bytes()[0], 0)?;
-
-        hex::decode_to_slice(&value[1..35], &mut res[3..])?;
-
-        Ok(PwnedPwd {
-            sha1: res,
-            count: value[36..].parse()?,
-        })
-    }
-}
-
-fn val(char: u8, idx: usize) -> Result<u8, hex::FromHexError> {
-    match char {
-        b'A'..=b'F' => Ok(char - b'A' + 10),
-        b'a'..=b'f' => Ok(char - b'a' + 10),
-        b'0'..=b'9' => Ok(char - b'0'),
-        _ => Err(hex::FromHexError::InvalidHexCharacter {
-            c: char as char,
-            index: idx,
-        }),
-    }
-}
-
-impl Display for Prefix {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        self.as_prefix_str().fmt(f)
-    }
-}
-
 #[cfg(test)]
 #[rustfmt::skip]
 mod tests {
@@ -259,7 +155,7 @@ mod tests {
 
     
     #[test]
-    fn prefix_as_prefix_str() {
+    fn as_prefix_str() {
         assert_eq!("00000", Prefix(0x00000).as_prefix_str().as_ref());
         assert_eq!("00000", Prefix(0x00000).as_prefix_str().as_ref());
         assert_eq!("00001", Prefix(0x00001).as_prefix_str().as_ref());
@@ -276,7 +172,7 @@ mod tests {
     }
 
     #[test]
-    fn prefix_write_prefix() { 
+    fn write_prefix() { 
         let mut dst = [0u8; 3];
         Prefix(0x21BD4).write_prefix(&mut dst);
 
@@ -289,7 +185,7 @@ mod tests {
     }
 
     #[test]
-    fn prefix_try_from_u32() {
+    fn try_from_u32() {
         assert_eq!(Ok(Prefix(0x00000)), 0x00000.try_into());
         assert_eq!(Ok(Prefix(0x00001)), 0x00001.try_into());
         assert_eq!(Ok(Prefix(0xFFFFF)), 0xFFFFF.try_into());
@@ -298,7 +194,7 @@ mod tests {
     }
 
     #[test]
-    fn prefix_next() {
+    fn next() {
         let mut prefix = Prefix(0);
         while let Some(next) = prefix.next(){
             assert_eq!(next.0, prefix.0 + 1);
@@ -307,24 +203,6 @@ mod tests {
         assert_eq!(0xFFFFF, prefix.0);
         assert_eq!(None, prefix.next());
         assert_eq!(None, prefix.next());
-    }
-
-    #[test]
-    fn parse() {
-
-        let parser = Parser::new(Prefix(0x21BD4));
-
-        assert_eq!(PwnedPwd { sha1: hex::decode("21BD4004DDDC80AE4683948C5A1C5903584D8087").unwrap().try_into().unwrap(), count: 13 }, parser.parse("004DDDC80AE4683948C5A1C5903584D8087:13").unwrap());
-        assert_eq!(PwnedPwd { sha1: hex::decode("21BD4FFF08998514E6E8F28DBB4CA9F74EA5CAFA").unwrap().try_into().unwrap(), count: 3 }, parser.parse("FFF08998514E6E8F28DBB4CA9F74EA5CAFA:3").unwrap());
-
-        let parser = Parser { prefix: Prefix(0x00000) };
-        assert_eq!(PwnedPwd { sha1: hex::decode("00000004DDDC80AE4683948C5A1C5903584D8087").unwrap().try_into().unwrap(), count: 0 }, parser.parse("004DDDC80AE4683948C5A1C5903584D8087:0").unwrap());
-        assert_eq!(PwnedPwd { sha1: hex::decode("00000FFF08998514E6E8F28DBB4CA9F74EA5CAFA").unwrap().try_into().unwrap(), count: 999999 }, parser.parse("FFF08998514E6E8F28DBB4CA9F74EA5CAFA:999999").unwrap());
-
-        assert_eq!(Err::<PwnedPwd, ParseError>(ParseError::FromHexError(hex::FromHexError::InvalidHexCharacter { c: 'Q', index: 0 })), parser.parse("QFF08998514E6E8F28DBB4CA9F74EA5CAFA:999999"));
-        assert_eq!(Err::<PwnedPwd, ParseError>(ParseError::FromHexError(hex::FromHexError::InvalidHexCharacter { c: ':', index: 33 })), parser.parse("AFF08998514E6E8F28DBB4CA9F74EA5CAF::999999"));
-        assert_eq!(Err::<PwnedPwd, ParseError>(ParseError::InvalidStringLength), parser.parse("FF08998514E6E8F28DBB4CA9F74EA5CAFA"));
-        assert_eq!(Err::<PwnedPwd, ParseError>(ParseError::InvalidString), parser.parse("FF08998514E6E8F28DBB4CA9F74EA5CAFA|999999"));
     }
 
     #[test]

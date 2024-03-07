@@ -633,60 +633,19 @@ dependencies = [
 ]
 
 [[package]]
-name = "pwned_pwd"
-version = "0.1.0"
-dependencies = [
- "futures",
- "pin-project-lite",
- "pwned_pwd_core",
- "pwned_pwd_downloader",
- "pwned_pwd_store",
- "thiserror",
- "tokio",
-]
-
-[[package]]
 name = "pwned_pwd_core"
-version = "0.1.0"
-dependencies = [
- "hex",
- "thiserror",
- "tracing",
-]
-
-[[package]]
-name = "pwned_pwd_downloader"
 version = "0.1.0"
 dependencies = [
  "futures",
  "hex",
  "hex-literal",
- "pwned_pwd_core",
+ "pin-project-lite",
  "reqwest",
  "thiserror",
  "tokio",
  "tracing",
  "tracing-subscriber",
  "url",
-]
-
-[[package]]
-name = "pwned_pwd_store"
-version = "0.1.0"
-dependencies = [
- "futures",
- "pwned_pwd_core",
-]
-
-[[package]]
-name = "pwned_pwd_store_local"
-version = "0.1.0"
-dependencies = [
- "futures",
- "hex-literal",
- "pwned_pwd_core",
- "pwned_pwd_store",
- "tokio",
 ]
 
 [[package]]

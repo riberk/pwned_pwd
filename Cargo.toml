@@ -1,6 +1,6 @@
 [workspace]
 resolver = "2"
-members = [ "pwned_pwd", "pwned_pwd_core","pwned_pwd_downloader", "pwned_pwd_store", "pwned_pwd_store_local"]
+members = [ "pwned_pwd" ]
 
 [profile.test]
 debug = 2

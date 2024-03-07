@@ -1,19 +1,25 @@
 [package]
-name = "pwned_pwd"
+name = "pwned_pwd_core"
 version = "0.1.0"
 edition = "2021"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[features]
+store-local = []
 
 [dependencies]
-pwned_pwd_core = { path = "../pwned_pwd_core" }
-pwned_pwd_downloader = { path = "../pwned_pwd_downloader" }
-pwned_pwd_store = { path = "../pwned_pwd_store" }
-
-futures = { workspace = true }
-pin-project-lite = { workspace = true }
+hex = { workspace = true }
 thiserror = { workspace = true }
+tracing = { workspace = true }
+
+reqwest = { workspace = true }
+futures = { workspace = true }
+url = { workspace = true }
+tokio = { workspace = true }
+
+pin-project-lite = { workspace = true }
 
 
 [dev-dependencies]
-tokio = { workspace = true }
+
+hex-literal = { workspace = true }
+tracing-subscriber = { workspace = true }

@@ -1,5 +1,6 @@
 use futures::{future::BoxFuture, Stream};
-use pwned_pwd_core::Chunk;
+
+use crate::chunk::Chunk;
 
 pub trait Store {
     type Error;
@@ -11,7 +12,7 @@ pub trait Store {
         s: S,
     ) -> BoxFuture<'a, Result<(), Self::Error>>;
 
-    fn exists<'a>(&'a self, val: [u8; 20]) -> BoxFuture<'a, Result<bool, Self::Error>>;
+    fn exists(&self, val: [u8; 20]) -> BoxFuture<'_, Result<bool, Self::Error>>;
 }
 
 /// Store may or may not be order-agnostic to saving data

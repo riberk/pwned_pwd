@@ -3,11 +3,11 @@ use std::sync::{
     Arc,
 };
 
+use crate::{chunk::Chunk, parser::ParseError, prefix::Prefix};
 use futures::{
     channel::mpsc::{self},
     SinkExt, Stream,
 };
-use pwned_pwd_core::*;
 use tracing::Instrument;
 use url::Url;
 
@@ -44,7 +44,7 @@ trait IntoDownloadError<T> {
 impl<T, E: Into<DownloadErrorKind>> IntoDownloadError<T> for Result<T, E> {
     fn into_download_error(self, prefix: &Prefix) -> Result<T, DownloadError> {
         self.map_err(|e| DownloadError {
-            prefix: prefix.clone(),
+            prefix: *prefix,
             kind: e.into(),
         })
     }

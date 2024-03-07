@@ -5,8 +5,10 @@ use std::path::PathBuf;
 
 use futures::StreamExt;
 use futures::{future::BoxFuture, Stream};
-use pwned_pwd_core::PwnedPwd;
-use pwned_pwd_store::Store;
+
+use crate::chunk::Chunk;
+use crate::pwned_pwd::PwnedPwd;
+use crate::store::{OrderRequirement, Store};
 
 /// What should we do when pwned passwords file exists
 #[derive(Debug, Clone)]
@@ -49,7 +51,7 @@ impl PwdFile {
         drop(self.file);
 
         if let Some(move_to) = self.move_on_complete_to {
-            rename(&self.path, &move_to)?;
+            rename(&self.path, move_to)?;
         }
 
         Ok(())
@@ -109,10 +111,7 @@ impl LocalStore {
 impl Store for LocalStore {
     type Error = std::io::Error;
 
-    fn save<
-        'a,
-        S: 'a + Stream<Item = pwned_pwd_core::Chunk> + std::marker::Unpin + std::marker::Send,
-    >(
+    fn save<'a, S: 'a + Stream<Item = Chunk> + std::marker::Unpin + std::marker::Send>(
         &'a self,
         mut s: S,
     ) -> BoxFuture<'a, Result<(), Self::Error>> {
@@ -130,15 +129,15 @@ impl Store for LocalStore {
         })
     }
 
-    fn exists<'a>(&'a self, val: [u8; 20]) -> BoxFuture<'a, Result<bool, Self::Error>> {
+    fn exists(&self, val: [u8; 20]) -> BoxFuture<'_, Result<bool, Self::Error>> {
         Box::pin(async move {
             let mut file = self.open_read()?;
             exists(&mut file, val)
         })
     }
 
-    fn order_requirement() -> pwned_pwd_store::OrderRequirement {
-        pwned_pwd_store::OrderRequirement::Ordered
+    fn order_requirement() -> OrderRequirement {
+        OrderRequirement::Ordered
     }
 }
 
@@ -154,7 +153,7 @@ fn exists<T: Seek + Read>(data: &mut T, x: [u8; 20]) -> Result<bool, std::io::Er
         data.seek(io::SeekFrom::Start(mid * 20))?;
         data.read_exact(&mut buf)?;
 
-        let cmp = (&buf).cmp(&x);
+        let cmp = buf.cmp(&x);
 
         left = if cmp == Ordering::Less { mid + 1 } else { left };
         right = if cmp == Ordering::Greater { mid } else { right };
@@ -176,7 +175,8 @@ mod tests {
 
     use futures::SinkExt;
     use hex_literal::hex;
-    use pwned_pwd_core::{Chunk, Prefix};
+
+    use crate::prefix::Prefix;
 
     use super::*;
 

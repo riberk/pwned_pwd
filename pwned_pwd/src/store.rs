@@ -16,7 +16,7 @@ pub trait Store {
 }
 
 /// Store may or may not be order-agnostic to saving data
-/// If it is, a Stream argument must be ordered (for example for local store)
+/// If it is, a Stream argument must be ordered (for example for local file store)
 /// If it's not, a Stream argument can be unordered
 pub enum OrderRequirement {
     /// Stream must be ordered
